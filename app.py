@@ -123,7 +123,29 @@ def costprice():
        
 @app.route('/bonus',methods=['POST','GET'])
 def bonus():
-    
+    bonus_amount=''
+    if request.method=="POST":
+        year=int(request.form["year"])
+        salary=int(request.form["salary"])
+        if year >5:
+            bonus_amount = 0.05 * salary
+           
+        else:
+            bonus_amount = 'You are not eligible'
 
+    return render_template('bonus.html',bonus_amount=bonus_amount)
+
+@app.route('/lastdigit',methods=['POST','GET'])
+def lastdigit():
+    lastnum=''
+    if request.method=="POST":
+        lastdigit=int(request.form["lastdigit"])
+        if lastdigit % 3 == 0:
+            lastnum="The last digit of the number is divisible by 3."
+        else:
+            lastnum="The last digit of the number is not divisible by 3."
+    return render_template('lastdigit.html',lastnum=lastnum)
+
+    
 app.run()
  
