@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,render_template,request
 
 app=Flask(__name__)
 
@@ -34,4 +34,96 @@ def fun3(a):
     # for i in str(a)[::-1]:
     #     reverse_number=reverse_number + str(i)
         return 'reverse of number is :'+a[::-1]
+
+@app.route('/new')
+def new():
+    return render_template('new.html') 
+@app.route('/',methods=['POST','GET'])
+def firstpage():
+    if request.method=="POST":
+        name1=request.form["name"]
+        place1=request.form["place"]
+        print(name1,place1)
+
+    return render_template('1stpage.html')
+@app.route('/2ndpage')
+def secondpage():
+    return render_template('2ndpage.html')
+
+@app.route('/bill',methods=['POST','GET'])
+def bill():
+    chrg=''
+    if request.method=="POST" :
+        unit=int(request.form["unit"])  
+        if unit<=100:
+            chrg="no charges"
+        elif unit<=200:  
+            chrg=(unit-100)*5
+
+        else:
+            chrg=(unit-200)*10+500
+    return render_template('bill.html',chrg=chrg) 
+
+@app.route('/city',methods=['POST','GET'])
+def city():
+    mmt=''
+    if request.method=="POST":
+        city=request.form["city"]
+        if city=="Delhi":
+            mmt="Red Fort"
+        elif city=="agra":
+            mmt="Taj Mahal"
+        elif city=="jaipur":
+            mmt="Jal Mahal"
+
+        else:
+            print('no monument found')            
+    return render_template('city.html',mmt=mmt) 
+
+
+@app.route('/date',methods=['POST','GET'])
+def date():
+    day=''
+    if request.method=="POST":
+        date=int(request.form["date"])
+        if date==1:
+            day='sunday'
+        elif date==2:
+            day='monday' 
+        elif date==3:
+            day='tuesday' 
+        elif date==4:
+            day='wednesday' 
+        elif date==5:
+            day='thursday'
+        elif date==6:
+            day='friday' 
+        elif date==7:
+            day='saturday' 
+
+        else:
+            day='invalid id'  
+    return render_template('day.html',day=day) 
+    
+@app.route('/costprice',methods=['POST','GET'])
+def costprice():
+    tax=''
+    if request.method=="POST":
+        costprice=int(request.form["costprice"])
+        if costprice > 100000:
+            tax_percentage = 0.15 * costprice
+            tax=tax_percentage
+        elif costprice > 50000:
+            tax_percentage = 0.10 * costprice
+            tax=tax_percentage
+        else:
+            tax_percentage = 0.05 * costprice
+            tax="tax:",tax_percentage
+    return render_template('costprice.html',tax=tax) 
+       
+@app.route('/bonus',methods=['POST','GET'])
+def bonus():
+    
+
 app.run()
+ 
