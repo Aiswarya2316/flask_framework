@@ -1,4 +1,12 @@
 from flask import Flask,render_template,request
+import sqlite3
+
+# try:
+#     con.execute("create table form (name text,age int,rollnumber int,mark int)")#create table
+# except:
+#         pass
+ 
+
 
 app=Flask(__name__)
 
@@ -146,6 +154,38 @@ def lastdigit():
             lastnum="The last digit of the number is not divisible by 3."
     return render_template('lastdigit.html',lastnum=lastnum)
 
-    
-app.run()
+@app.route('/form',methods=['POST','GET'])
+def form():
+    if request.method=="POST":
+        name1=request.form["name"]
+        age1=int(request.form["age"])
+        rollnumber1=int(request.form["rollnumber"])
+        mark1=int(request.form["mark"])
+        con = sqlite3.connect("forms.db")
+        con.execute("insert into form (name,age,rollnumber,mark) values(?,?,?,?)",(name1,age1,rollnumber1,mark1))
+        con.commit()
+    return render_template('form.html')
+
+@app.route('/display')
+def display():
+    con=sqlite3.connect("forms.db")
+    data=con.execute("select * from form" )
+    return render_template('display.html',data=data)
+
+
+@app.route('/edit/<name>')
+def edit(name):
+    con = sqlite3.connect("forms.db")
+    data=con.execute("select * from form where name=? ",(name,))
+    print(data)
+
+    if request.method=='POST':
+        name1=request.form["name"]
+        age1=int(request.form["age"])
+        rollnumber1=int(request.form["rollnumber"])
+        mark1=int(request.form["mark"])
+        con.execute("update forms set name=?,age=?,rollnumber=?,mark=? where name=?",(name1,age1,rollnumber1,mark1))
+        con.commit()
+    return render_template('edit.html',data=data)    
+app.run() 
  
