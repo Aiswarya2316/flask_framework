@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect,url_for
 import sqlite3
 
 # try:
@@ -173,19 +173,29 @@ def display():
     return render_template('display.html',data=data)
 
 
-@app.route('/edit/<name>')
+@app.route('/edit/<name>',methods=['POST','GET'])
 def edit(name):
     con = sqlite3.connect("forms.db")
     data=con.execute("select * from form where name=? ",(name,))
-    print(data)
 
     if request.method=='POST':
         name1=request.form["name"]
         age1=int(request.form["age"])
         rollnumber1=int(request.form["rollnumber"])
         mark1=int(request.form["mark"])
-        con.execute("update forms set name=?,age=?,rollnumber=?,mark=? where name=?",(name1,age1,rollnumber1,mark1))
+        print(name)
+
+        con.execute("update form set name=?,age=?,rollnumber=?,mark=? where name=?",(name1,age1,rollnumber1,mark1,name))
         con.commit()
+        return redirect(url_for('display'))
+
     return render_template('edit.html',data=data)    
+
+@app.route('/delete/<name>',methods=['POST','GET'])
+def delete(name):
+    con=sqlite3.connect("forms.db")
+    con.execute("delete from form where name=?",(name,))
+    con.commit()
+    return redirect(url_for('display'))
 app.run() 
  
